@@ -1,0 +1,24 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.contenedor {
+
+
+}
+
+.formulario {
+
+
+}
+
+.inpuCheck {
+
+    background-color: red;
+    margin: 4px;
+    margin-right: 8px;
+    width: 40px;
+
+}
