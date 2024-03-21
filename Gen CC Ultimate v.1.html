@@ -104,7 +104,7 @@
           if (alternate) {
               n *= 2;
               if (n > 9) {
-                  n = n - 9;
+                  n = (n % 10) + 1; // Corregido para manejar correctamente la suma y el cálculo del dígito de chequeo
               }
           }
           sum += n;
@@ -114,7 +114,7 @@
   }
 
 
-document.getElementById('generate').addEventListener('click', function() {
+  document.getElementById('generate').addEventListener('click', function() {
     const outputArea = document.getElementById('generatedCards');
     const binInput = document.getElementById('bin').value;
     const expMonth = document.getElementById('exp-month').value;
@@ -130,15 +130,21 @@ document.getElementById('generate').addEventListener('click', function() {
 
     let generatedCards = '';
 
-    const digitsToGenerate = totalDigits - binBase.length - 1; // Ajustar para el checksum
+    if (xCount > 0) {
+        // Calcula cuántos dígitos se necesitan generar, excluyendo el dígito de verificación
+        let numberToGenerate = totalDigits - binBase.length - 1; 
 
-    if (xCount > 0 && digitsToGenerate > 0) {
-        for (let i = 0; i < Math.pow(10, digitsToGenerate); i++) {
-            const paddedNumber = i.toString().padStart(digitsToGenerate, '0');
-            const cardNumberBase = binBase + paddedNumber;
-            const checksum = calculateChecksum(cardNumberBase, totalDigits);
-            const fullCardNumber = cardNumberBase + checksum;
-            // Generar CVV de 4 dígitos para AMEX, de lo contrario 3 dígitos
+        for (let i = 0; i < Math.pow(10, numberToGenerate); i++) {
+            // Prepara el número base, rellenando con los dígitos generados
+            const paddedNumber = i.toString().padStart(numberToGenerate, '0');
+            let cardNumberBase = binBase + paddedNumber;
+            
+            // Calcula el dígito de verificación para este número base
+            const checksum = calculateChecksum(cardNumberBase);
+            // Completa el número de la tarjeta con el dígito de verificación
+            const fullCardNumber = cardNumberBase + checksum.toString();
+
+            // Generar CVV: 4 dígitos para AMEX, de lo contrario 3 dígitos
             const cvv = isAmex ? Math.floor(Math.random() * 9000 + 1000).toString() : Math.floor(Math.random() * 900 + 100).toString();
 
             generatedCards += `${fullCardNumber}|${expMonth}|${expYear}|${cvv}\n`;
@@ -149,6 +155,24 @@ document.getElementById('generate').addEventListener('click', function() {
 
     outputArea.value = generatedCards;
 });
+
+function calculateChecksum(numberWithoutChecksum) {
+    let sum = 0;
+    let alternate = true;
+    for (let i = numberWithoutChecksum.length - 1; i >= 0; i--) {
+        let n = parseInt(numberWithoutChecksum.charAt(i), 10);
+        if (alternate) {
+            n *= 2;
+            if (n > 9) {
+                n -= 9;
+            }
+        }
+        sum += n;
+        alternate = !alternate;
+    }
+    return (10 - sum % 10) % 10;
+}
+
 
 // Añade aquí el manejador del evento click para el botón Descargar
 document.addEventListener('DOMContentLoaded', function() {
