@@ -95,24 +95,23 @@
     yearSelect.add(yearOption);
   }
 
-  function calculateChecksum(cardNumberWithoutChecksum, totalDigits) {
-    // Implementación del algoritmo de Luhn para el cálculo del dígito verificador
-    let sum = 0;
-    let alternate = true;
-    for (let i = cardNumberWithoutChecksum.length - 1; i >= 0; i--) {
-        let n = parseInt(cardNumberWithoutChecksum.charAt(i), 10);
-        if (alternate) {
-            n *= 2;
-            if (n > 9) {
-                n -= 9;
-            }
-        }
-        sum += n;
-        alternate = !alternate;
-    }
-    // Ajuste en base al total de dígitos de la tarjeta (16 para la mayoría, 15 para AMEX)
-    return totalDigits === 15 ? (sum % 10) : (10 - (sum % 10)) % 10;
-}
+  function calculateChecksum(cardNumberWithoutChecksum) {
+      let sum = 0;
+      let alternate = cardNumberWithoutChecksum.length % 2 === 0;
+      for (let i = cardNumberWithoutChecksum.length - 1; i >= 0; i--) {
+          let n = parseInt(cardNumberWithoutChecksum.charAt(i), 10);
+          if (alternate) {
+              n *= 2;
+              if (n > 9) {
+                  n = n - 9;
+              }
+          }
+          sum += n;
+          alternate = !alternate;
+      }
+      return (10 - (sum % 10)) % 10;
+  }
+
 
 document.getElementById('generate').addEventListener('click', function() {
     const outputArea = document.getElementById('generatedCards');
