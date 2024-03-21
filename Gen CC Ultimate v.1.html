@@ -138,7 +138,8 @@ document.getElementById('generate').addEventListener('click', function() {
             const cardNumberBase = binBase + paddedNumber;
             const checksum = calculateChecksum(cardNumberBase, totalDigits);
             const fullCardNumber = cardNumberBase + checksum;
-            const cvv = Math.floor(Math.random() * 900 + 100).toString(); // CVV aleatorio
+            // Generar CVV de 4 dígitos para AMEX, de lo contrario 3 dígitos
+            const cvv = isAmex ? Math.floor(Math.random() * 9000 + 1000).toString() : Math.floor(Math.random() * 900 + 100).toString();
 
             generatedCards += `${fullCardNumber}|${expMonth}|${expYear}|${cvv}\n`;
         }
