@@ -95,57 +95,59 @@
     yearSelect.add(yearOption);
   }
 
-  function calculateChecksum(cardNumberWithoutChecksum) {
+  function calculateChecksum(cardNumberWithoutChecksum, totalDigits) {
+    // Implementación del algoritmo de Luhn para el cálculo del dígito verificador
     let sum = 0;
     let alternate = true;
     for (let i = cardNumberWithoutChecksum.length - 1; i >= 0; i--) {
-      let n = parseInt(cardNumberWithoutChecksum.charAt(i), 10);
-      if (alternate) {
-        n *= 2;
-        if (n > 9) {
-          n -= 9;
+        let n = parseInt(cardNumberWithoutChecksum.charAt(i), 10);
+        if (alternate) {
+            n *= 2;
+            if (n > 9) {
+                n -= 9;
+            }
         }
-      }
-      sum += n;
-      alternate = !alternate;
+        sum += n;
+        alternate = !alternate;
     }
-    return (10 - (sum % 10)) % 10;
-  }
+    // Ajuste en base al total de dígitos de la tarjeta (16 para la mayoría, 15 para AMEX)
+    return totalDigits === 15 ? (sum % 10) : (10 - (sum % 10)) % 10;
+}
 
-  document.getElementById('generate').addEventListener('click', function() {
-  const outputArea = document.getElementById('generatedCards');
-  const binInput = document.getElementById('bin').value;
-  const expMonth = document.getElementById('exp-month').value;
-  const expYear = document.getElementById('exp-year').value;
+document.getElementById('generate').addEventListener('click', function() {
+    const outputArea = document.getElementById('generatedCards');
+    const binInput = document.getElementById('bin').value;
+    const expMonth = document.getElementById('exp-month').value;
+    const expYear = document.getElementById('exp-year').value;
 
-  // Extraer el BIN y contar las "x"
-  const binBase = binInput.replace(/x/g, '');
-  const xCount = (binInput.match(/x/g) || []).length;
+    // Determinar si el BIN corresponde a American Express
+    const isAmex = binInput.startsWith('34') || binInput.startsWith('37');
+    // Ajustar el total de dígitos según sea AMEX o no
+    const totalDigits = isAmex ? 15 : 16;
 
-  let generatedCards = '';
+    const binBase = binInput.replace(/x/g, '');
+    const xCount = (binInput.match(/x/g) || []).length;
 
-  // Asumiendo que el número total deseado de dígitos es 16
-  const totalDigits = 16;
-  const digitsToGenerate = totalDigits - binBase.length - 1; // -1 para el checksum
+    let generatedCards = '';
 
-  if (xCount > 0 && digitsToGenerate > 0) {
-    for (let i = 0; i < Math.pow(10, digitsToGenerate); i++) {
-      const paddedNumber = i.toString().padStart(digitsToGenerate, '0');
-      const cardNumberBase = binBase + paddedNumber;
-      const checksum = calculateChecksum(cardNumberBase);
-      const fullCardNumber = cardNumberBase + checksum;
-      const cvv = Math.floor(Math.random() * 900 + 100).toString();
+    const digitsToGenerate = totalDigits - binBase.length - 1; // Ajustar para el checksum
 
-      generatedCards += `${fullCardNumber}|${expMonth}|${expYear}|${cvv}\n`;
+    if (xCount > 0 && digitsToGenerate > 0) {
+        for (let i = 0; i < Math.pow(10, digitsToGenerate); i++) {
+            const paddedNumber = i.toString().padStart(digitsToGenerate, '0');
+            const cardNumberBase = binBase + paddedNumber;
+            const checksum = calculateChecksum(cardNumberBase, totalDigits);
+            const fullCardNumber = cardNumberBase + checksum;
+            const cvv = Math.floor(Math.random() * 900 + 100).toString(); // CVV aleatorio
+
+            generatedCards += `${fullCardNumber}|${expMonth}|${expYear}|${cvv}\n`;
+        }
+    } else {
+        generatedCards = 'El BIN ingresado no es válido o no tiene el formato correcto. Ingrese uno con "x" para los dígitos desconocidos.';
     }
-  } else {
-    // Mensaje de error o lógica para manejar entradas no válidas
-    generatedCards = 'BIN ingresado no es válido o no tiene el formato correcto ingresar con las "x".';
-  }
 
-  outputArea.value = generatedCards;
+    outputArea.value = generatedCards;
 });
-
 </script>
 <footer class="footer">
   &copy; ParceroBusiness © All rights reserved 2024
