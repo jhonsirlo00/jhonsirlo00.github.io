@@ -30,6 +30,11 @@
 <body>
 
 <div class="container mt-5">
+  <div class="text-center mb-4">
+    <button id="mode-normal" class="btn btn-info">Generar Normal</button>
+    <button id="mode-ordered" class="btn btn-info">Generar en Orden</button>
+  </div>
+
   <h1 class="text-center mb-4">Gen CC Ultimate v.1</h1>
   <div class="row">
     <div class="col-md-6 offset-md-3">
@@ -222,6 +227,30 @@ document.getElementById('clear').addEventListener('click', function() {
     window.URL.revokeObjectURL(downloadUrl);
   });
 });
+
+let generationMode = 'normal'; // Por defecto, establece el modo a 'normal'
+
+document.getElementById('mode-normal').addEventListener('click', function() {
+      // Redirige al usuario a la página para generación normal
+      window.location.href = 'Gen CC Ultimate v.1 Normal.html';
+  });
+
+  document.getElementById('mode-ordered').addEventListener('click', function() {
+      // Redirige al usuario a la página para generación en orden
+      window.location.href = 'Gen CC Ultimate v.1.html';
+  });
+
+document.getElementById('generate').addEventListener('click', function() {
+    const outputArea = document.getElementById('generatedCards');
+    // La lógica de generación se modifica aquí para usar `generationMode`
+    if (generationMode === 'normal') {
+        // Implementa la generación normal
+    } else if (generationMode === 'ordered') {
+        // Implementa la generación en orden
+    }
+    // El resto de la lógica de generación sigue aquí
+});
+
 </script>
 <footer class="footer">
   &copy; ParceroBusiness © All rights reserved 2024
