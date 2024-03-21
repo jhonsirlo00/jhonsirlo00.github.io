@@ -113,15 +113,24 @@
   }
 
   document.getElementById('generate').addEventListener('click', function() {
-    const outputArea = document.getElementById('generatedCards');
-    const binBase = document.getElementById('bin').value.replace(/x/g, '');
-    const expMonth = document.getElementById('exp-month').value;
-    const expYear = document.getElementById('exp-year').value;
+  const outputArea = document.getElementById('generatedCards');
+  const binInput = document.getElementById('bin').value;
+  const expMonth = document.getElementById('exp-month').value;
+  const expYear = document.getElementById('exp-year').value;
 
-    let generatedCards = '';
+  // Extraer el BIN y contar las "x"
+  const binBase = binInput.replace(/x/g, '');
+  const xCount = (binInput.match(/x/g) || []).length;
 
-    for (let i = 0; i < 10000; i++) {
-      let paddedNumber = (i.toString().padStart(4, '0')).slice(0, 15 - binBase.length);
+  let generatedCards = '';
+
+  // Asumiendo que el número total deseado de dígitos es 16
+  const totalDigits = 16;
+  const digitsToGenerate = totalDigits - binBase.length - 1; // -1 para el checksum
+
+  if (xCount > 0 && digitsToGenerate > 0) {
+    for (let i = 0; i < Math.pow(10, digitsToGenerate); i++) {
+      const paddedNumber = i.toString().padStart(digitsToGenerate, '0');
       const cardNumberBase = binBase + paddedNumber;
       const checksum = calculateChecksum(cardNumberBase);
       const fullCardNumber = cardNumberBase + checksum;
@@ -129,23 +138,19 @@
 
       generatedCards += `${fullCardNumber}|${expMonth}|${expYear}|${cvv}\n`;
     }
+  } else {
+    // Mensaje de error o lógica para manejar entradas no válidas
+    generatedCards = 'BIN ingresado no es válido o no tiene el formato correcto ingresar con las "x".';
+  }
 
-    outputArea.value = generatedCards;
-  });
+  outputArea.value = generatedCards;
+});
 
-  document.getElementById('clear').addEventListener('click', function() {
-    document.getElementById('generatedCards').value = '';
-  });
-
-  document.getElementById('copy').addEventListener('click', function() {
-    const generatedCards = document.getElementById('generatedCards');
-    generatedCards.select();
-    document.execCommand('copy');
-  });
 </script>
-</body>
-
-</html>
 <footer class="footer">
   &copy; ParceroBusiness © All rights reserved 2024
 </footer>
+
+</body>
+
+</html>
