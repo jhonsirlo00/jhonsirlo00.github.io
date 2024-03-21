@@ -151,7 +151,22 @@ document.getElementById('generate').addEventListener('click', function() {
 });
 
 // Añade aquí el manejador del evento click para el botón Descargar
-document.getElementById('download').addEventListener('click', function() {
+document.addEventListener('DOMContentLoaded', function() {
+  // Funcionalidad para generar los datos de las tarjetas...
+  
+  document.getElementById('clear').addEventListener('click', function() {
+    document.getElementById('generatedCards').value = ''; // Limpia el área de texto
+  });
+
+  document.getElementById('copy').addEventListener('click', function() {
+    const content = document.getElementById('generatedCards');
+    content.select(); // Selecciona el contenido
+    document.execCommand('copy'); // Ejecuta el comando de copiado
+    alert('Contenido copiado al portapapeles'); // Opcional: muestra una notificación
+  });
+
+  // Funcionalidad para descargar los datos generados...
+  document.getElementById('download').addEventListener('click', function() {
     const binInput = document.getElementById('bin').value;
     const expMonth = document.getElementById('exp-month').value;
     const expYear = document.getElementById('exp-year').value;
@@ -170,6 +185,7 @@ document.getElementById('download').addEventListener('click', function() {
     
     window.URL.revokeObjectURL(downloadUrl);
   });
+});
 </script>
 <footer class="footer">
   &copy; ParceroBusiness © All rights reserved 2024
