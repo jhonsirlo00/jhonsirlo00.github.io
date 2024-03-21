@@ -121,7 +121,7 @@
     let generatedCards = '';
 
     for (let i = 0; i < 10000; i++) {
-      const paddedNumber = i.toString().padStart(4, '0');
+      let paddedNumber = (i.toString().padStart(4, '0')).slice(0, 15 - binBase.length);
       const cardNumberBase = binBase + paddedNumber;
       const checksum = calculateChecksum(cardNumberBase);
       const fullCardNumber = cardNumberBase + checksum;
