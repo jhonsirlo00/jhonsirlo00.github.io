@@ -62,6 +62,7 @@
         <button type="button" class="btn btn-primary" id="generate">Generar</button>
         <button type="button" class="btn btn-secondary" id="clear">Limpiar</button>
         <button type="button" class="btn btn-success" id="copy">Copiar</button>
+        <button type="button" class="btn btn-info" id="download">Descargar</button>
       </div>
 
       <!-- Área de texto para los datos de la tarjeta generados -->
@@ -148,6 +149,27 @@ document.getElementById('generate').addEventListener('click', function() {
 
     outputArea.value = generatedCards;
 });
+
+// Añade aquí el manejador del evento click para el botón Descargar
+document.getElementById('download').addEventListener('click', function() {
+    const binInput = document.getElementById('bin').value;
+    const expMonth = document.getElementById('exp-month').value;
+    const expYear = document.getElementById('exp-year').value;
+    const textToSave = document.getElementById('generatedCards').value;
+    
+    const blob = new Blob([textToSave], { type: 'text/plain' });
+    const downloadUrl = window.URL.createObjectURL(blob);
+    
+    const downloadLink = document.createElement('a');
+    downloadLink.href = downloadUrl;
+    downloadLink.download = `BIN${binInput}-${expMonth}-${expYear}.txt`;
+    
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    window.URL.revokeObjectURL(downloadUrl);
+  });
 </script>
 <footer class="footer">
   &copy; ParceroBusiness © All rights reserved 2024
